@@ -22,7 +22,7 @@
                         <label>Email</label>
                     </div>
                     <div>
-                        <input id="email" name="email" type="text" placeholder="Type here...">
+                        <input id="email" name="email" type="email" placeholder="Type here...">
                     </div>                    
                 </div>
 
@@ -54,6 +54,42 @@
             </form>
         </div>
     </div>
+
+    <script>
+
+        const form = document.getElementsByTagName('form')[0];
+
+        form.addEventListener('submit', (event) => {
+            event.preventDefault();
+            const username = document.getElementById('username').value;
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const passwordConfirm = document.getElementById('confirm-password').value;
+
+            const data = {
+                username: username,
+                email: email,
+                password: password
+            };
+
+            // let formData = new FormData();
+            // formData.append('data', data);
+
+            let xhr = new XMLHttpRequest();
+
+            xhr.open('POST', 'http://localhost:3000/api/v1/register', true);
+            xhr.setRequestHeader('Content-Type', 'application/json;charset=UTF-8');
+            xhr.onreadystatechange = function(){
+                if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200){
+                    // console.log(xhr.responseText);
+                    window.location.href = '/login?register=success';
+                }
+            };
+
+            xhr.send(JSON.stringify(data));
+        });
+        
+    </script>
     
 </body>
 </html>
