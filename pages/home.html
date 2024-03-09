@@ -9,6 +9,20 @@
             padding: 20px;
         }
 
+        .choose-user ul li{
+            border: 1px #000 solid;
+            border-radius: 10px;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            width: 40%;
+            margin: 20px auto;
+            cursor: pointer;
+        }
+
+        .user-chat{
+            display: none;
+        }
+
         .chat-box{
             border: 1px #000 solid;
             width: 60%;
@@ -68,11 +82,69 @@
         }
 
 
+         /* loader */
+         .loader {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            position: relative;
+            animation: rotate 1s linear infinite
+        }
+        .loader::before , .loader::after {
+            content: "";
+            box-sizing: border-box;
+            position: absolute;
+            inset: 0px;
+            border-radius: 50%;
+            border: 5px solid #FFF;
+            animation: prixClipFix 2s linear infinite ;
+        }
+        .loader::after{
+            border-color: #FF3D00;
+            animation: prixClipFix 2s linear infinite , rotate 0.5s linear infinite reverse;
+            inset: 6px;
+        }
+
+        @keyframes rotate {
+            0%   {transform: rotate(0deg)}
+            100%   {transform: rotate(360deg)}
+        }
+
+        @keyframes prixClipFix {
+            0%   {clip-path:polygon(50% 50%,0 0,0 0,0 0,0 0,0 0)}
+            25%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 0,100% 0,100% 0)}
+            50%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,100% 100%,100% 100%)}
+            75%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 100%)}
+            100% {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 0)}
+        }
+
+         
+
     </style>
 </head>
 <body>
-    <div style="text-align: end; font-size: 20px; padding-right: 20px;"><a href="">Exit chat</a></div>
-    <div class="container">
+    <div style="display: flex; justify-content: space-between; padding: 0 10px;">
+        <a id="back" href="">Back</a>
+        <a id="exit" href="">Exit chat</a>
+    </div>
+
+    <div class="container choose-user">
+        <div>
+            <div style="width: 40%; margin: auto; text-align: center;">Choose user here</div>
+            <ul style="text-decoration: none; list-style: none; text-align: center;">
+                <li class="user">Pri</li>
+                <li class="user">Pri</li>
+                <li>Pri</li>
+                <li>Pri</li>
+            </ul>
+        </div>
+    </div>
+
+    <!-- <div class="loader" style="margin: auto;">
+        <span class="loader"></span>
+    </div> -->
+
+    <div class="container user-chat">
         <div style="text-align: center;"><h3>Chat Room</h3></div>
         <div class="chat-box">
             <div class="chat-content left-chat">
@@ -89,6 +161,23 @@
             </form>
         </div>
     </div>
+
+    <script>
+        const user = document.getElementsByClassName('user');
+
+        for(let i = 0; i < user.length; ++i){
+            user[i].addEventListener('click', function(){
+                // console.log('iam clicked');
+                let chooseUser = document.getElementsByClassName('choose-user')[0];
+                chooseUser.style.display = 'none';
+
+                let userChat = document.getElementsByClassName('user-chat')[0];
+                userChat.style.display = 'block';
+            });
+        }
+
+        
+    </script>
     
 </body>
 </html>
