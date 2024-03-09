@@ -22,19 +22,23 @@ const con = mysql.createConnection({
 
 con.connect(function(err){
     if(err) throw err;
-    // console.log('Connected!');
+    console.log('Connected to database!');
 });
 
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
-app.get('/', (req, res) => {
-    const data = {
-        status : 200,
-        msg : 'Successfully get'
-    };
+// app.get('/', (req, res) => {
+//     const data = {
+//         status : 200,
+//         msg : 'Successfully get'
+//     };
 
-    res.status(200).send(data);
+//     res.status(200).send(data);
+// });
+
+app.get('/', (req, res) => {
+    res.sendFile(__dirname + '\\pages\\home.html');
 });
 
 app.get('/login', (req, res) => {
@@ -42,19 +46,60 @@ app.get('/login', (req, res) => {
 });
 
 app.get('/register', (req, res) => {
-
-    // console.log(req);
     res.sendFile(__dirname + '\\pages\\register.html');
 });
 
 
-app.post('/api/v1/register', (req, res) => {
-    console.log(req.body);
+app.post('/api/v1/login', (req, res) => {
+    const email = req.body.email;
+    const password = req.body.password;
+    const sqlEmailChecking = 'SELECT * FROM users WHERE email = ?';
 
+    con.query(sqlEmailChecking, [email], (error, results, fields) => {
+        if(results.length === 1){   
+            const hashPassword = createHash('sha256').update(password).digest('hex');
+
+            if(hashPassword === results[0].password){
+                const data = {
+                    status: 200,
+                    msg: 'success',
+                    text: 'Login success',
+                    user: { id: results[0].id} // encrypt this!!!
+                };
+
+                res.status(200).send(data);
+            } else{
+                const data = {
+                    status: 400,
+                    msg: 'failed',
+                    text: 'Invalid Password!'
+                };
+
+                console.log('Invalid Password');
+
+                res.status(400).send(data);
+            }
+
+        } else{
+            const data = {
+                status: 400,
+                msg: 'failed',
+                text: 'User not found'
+            };
+
+            console.log('User not found');
+
+            res.status(400).send(data);
+        }
+    });
+    
+});
+
+
+app.post('/api/v1/register', (req, res) => {
     const email = req.body.email;
     const sqlIfEmailExists = 'SELECT * FROM users WHERE email = ?';
-    let isExists = true;
-    con.query(sqlIfEmailExists, [email], async(error, results, fields) => {
+    con.query(sqlIfEmailExists, [email], (error, results, fields) => {
         if(results.length === 0){
             const name = req.body.username;
             const password = req.body.password;

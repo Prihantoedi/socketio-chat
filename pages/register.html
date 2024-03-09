@@ -51,6 +51,10 @@
                     <button type="submit" style="background: rgb(93, 93, 212); color: #fff; padding: 10px 20px; border: none; border-radius: 10px;">Register</button>
                 </div>
                 
+                <div style="display:flex; justify-content: center; align-items: center; gap: .5rem; margin-top: 15px;">
+                    <div>Already have an account? </div>
+                    <a href="/login"> Login here</a>
+                </div>
             </form>
         </div>
     </div>
@@ -71,9 +75,6 @@
                 email: email,
                 password: password
             };
-
-            // let formData = new FormData();
-            // formData.append('data', data);
 
             let xhr = new XMLHttpRequest();
 
