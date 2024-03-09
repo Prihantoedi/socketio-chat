@@ -1,0 +1,211 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Socket IO Chat</title>
+    <style>
+        .container{
+            padding: 20px;
+        }
+
+        #header-in-chat{
+            display: none;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+
+        .choose-user ul li{
+            border: 1px #000 solid;
+            border-radius: 10px;
+            padding-top: 20px;
+            padding-bottom: 20px;
+            width: 40%;
+            margin: 20px auto;
+            cursor: pointer;
+        }
+
+        .user-chat{
+            display: none;
+        }
+
+        .chat-box{
+            border: 1px #000 solid;
+            width: 60%;
+            height: 70vh;
+            margin: auto;
+            overflow-x: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .type-text-wrapper{
+            width: 61.7%;
+            background-color: rgb(95, 95, 95);
+            height: 50px;
+            margin: auto;
+            padding: 5px;
+        }
+
+        .type-text-wrapper form{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .type-text-wrapper input{
+            height: 30px;
+            width: 85%;
+            border-radius: 10px;
+            border: none;
+            padding: 5px 15px;
+        }
+
+        .type-text-wrapper button{
+            width: 10%;
+            padding: 15px 40px;
+            background-color: rgb(22, 148, 190);
+            text-align: center;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .chat-content{
+            background-color: rgb(74, 163, 193);
+            width: 30%;
+            padding: .8rem;
+            color: #fff;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .right-chat{
+            background-color: rgb(98, 213, 251);
+            align-self: self-end;
+        }
+
+
+         /* loader */
+         .loader {
+            width: 48px;
+            height: 48px;
+            border-radius: 50%;
+            position: relative;
+            animation: rotate 1s linear infinite
+        }
+        .loader::before , .loader::after {
+            content: "";
+            box-sizing: border-box;
+            position: absolute;
+            inset: 0px;
+            border-radius: 50%;
+            border: 5px solid #FFF;
+            animation: prixClipFix 2s linear infinite ;
+        }
+        .loader::after{
+            border-color: #FF3D00;
+            animation: prixClipFix 2s linear infinite , rotate 0.5s linear infinite reverse;
+            inset: 6px;
+        }
+
+        @keyframes rotate {
+            0%   {transform: rotate(0deg)}
+            100%   {transform: rotate(360deg)}
+        }
+
+        @keyframes prixClipFix {
+            0%   {clip-path:polygon(50% 50%,0 0,0 0,0 0,0 0,0 0)}
+            25%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 0,100% 0,100% 0)}
+            50%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,100% 100%,100% 100%)}
+            75%  {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 100%)}
+            100% {clip-path:polygon(50% 50%,0 0,100% 0,100% 100%,0 100%,0 0)}
+        }
+
+         
+
+    </style>
+</head>
+<body>
+
+    <div id="header-in-user-list" style="text-align: end">
+        <a class="exit" href="">Exit chat</a>
+    </div>
+
+    <div id="header-in-chat">
+        <a id="back" href="">Back</a>
+        <a class="exit" href="">Exit chat</a>
+    </div>
+
+    <div class="container choose-user">
+        <div>
+            <div style="width: 40%; margin: auto; text-align: center;">Choose user here</div>
+            <ul style="text-decoration: none; list-style: none; text-align: center;"> 
+                <% JSON.parse(users).forEach(function (ele){%>
+                    <li class="user" id="<%= ele.id %>"><%= ele.name %></li>
+                <% }) %>
+            </ul>
+        </div>
+    </div>
+
+    <!-- <div class="loader" style="margin: auto;">
+        <span class="loader"></span>
+    </div> -->
+
+    <div class="container user-chat">
+        <div style="text-align: center;"><h3>Chat Room</h3></div>
+        <div class="chat-box">
+            <div class="chat-content left-chat">
+                this is my chat
+            </div>
+            <div class="chat-content right-chat">
+                This is also chat
+            </div>
+        </div>
+        <div class="type-text-wrapper">
+            <form>
+                <input type="text" placeholder="Type here..." autocomplete="off">
+                <button>Send</button>
+            </form>
+        </div>
+    </div>
+
+    <script>
+        
+        const user = document.getElementsByClassName('user');
+
+        let headerInChat = document.getElementById('header-in-chat');
+        let headerInUserList = document.getElementById('header-in-user-list');
+
+        let chooseUser = document.getElementsByClassName('choose-user')[0];
+        let userChat = document.getElementsByClassName('user-chat')[0];
+        for(let i = 0; i < user.length; ++i){
+            user[i].addEventListener('click', function(){
+                chooseUser.style.display = 'none';
+                userChat.style.display = 'block';
+
+                headerInChat.style.display = 'flex';
+                headerInUserList.style.display = 'none';
+            });
+        }
+
+        const backBtn = document.getElementById('back');
+
+        backBtn.addEventListener('click', function(){
+            headerInChat.style.display = 'none';
+            headerInUserList.style.display = 'block';
+
+            chooseUser.style.display = 'block';
+            userChat.style.display = 'none';
+
+        });
+
+
+
+        
+    </script>
+    
+</body>
+</html>

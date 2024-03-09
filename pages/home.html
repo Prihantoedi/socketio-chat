@@ -9,6 +9,12 @@
             padding: 20px;
         }
 
+        #header-in-chat{
+            display: none;
+            justify-content: space-between;
+            padding: 0 10px;
+        }
+
         .choose-user ul li{
             border: 1px #000 solid;
             border-radius: 10px;
@@ -123,9 +129,15 @@
     </style>
 </head>
 <body>
-    <div style="display: flex; justify-content: space-between; padding: 0 10px;">
+
+    <div id="header-in-user-list" style="text-align: end">
+        <a class="exit" href="">Exit chat</a>
+    </div>
+
+    <!-- display: flex; justify-content: space-between; padding: 0 10px; -->
+    <div id="header-in-chat">
         <a id="back" href="">Back</a>
-        <a id="exit" href="">Exit chat</a>
+        <a class="exit" href="">Exit chat</a>
     </div>
 
     <div class="container choose-user">
@@ -163,18 +175,36 @@
     </div>
 
     <script>
+
         const user = document.getElementsByClassName('user');
 
+        let headerInChat = document.getElementById('header-in-chat');
+        let headerInUserList = document.getElementById('header-in-user-list');
+
+        let chooseUser = document.getElementsByClassName('choose-user')[0];
+        let userChat = document.getElementsByClassName('user-chat')[0];
         for(let i = 0; i < user.length; ++i){
             user[i].addEventListener('click', function(){
-                // console.log('iam clicked');
-                let chooseUser = document.getElementsByClassName('choose-user')[0];
                 chooseUser.style.display = 'none';
-
-                let userChat = document.getElementsByClassName('user-chat')[0];
                 userChat.style.display = 'block';
+
+                headerInChat.style.display = 'flex';
+                headerInUserList.style.display = 'none';
             });
         }
+
+        const backBtn = document.getElementById('back');
+
+        backBtn.addEventListener('click', function(){
+            headerInChat.style.display = 'none';
+            headerInUserList.style.display = 'block';
+
+            chooseUser.style.display = 'block';
+            userChat.style.display = 'none';
+
+        });
+
+
 
         
     </script>
