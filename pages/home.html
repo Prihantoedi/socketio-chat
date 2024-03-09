@@ -4,9 +4,91 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Socket IO Chat</title>
+    <style>
+        .container{
+            padding: 20px;
+        }
+
+        .chat-box{
+            border: 1px #000 solid;
+            width: 60%;
+            height: 70vh;
+            margin: auto;
+            overflow-x: auto;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .type-text-wrapper{
+            width: 61.7%;
+            background-color: rgb(95, 95, 95);
+            height: 50px;
+            margin: auto;
+            padding: 5px;
+        }
+
+        .type-text-wrapper form{
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: .5rem;
+        }
+
+        .type-text-wrapper input{
+            height: 30px;
+            width: 85%;
+            border-radius: 10px;
+            border: none;
+            padding: 5px 15px;
+        }
+
+        .type-text-wrapper button{
+            width: 10%;
+            padding: 15px 40px;
+            background-color: rgb(22, 148, 190);
+            text-align: center;
+            color: #fff;
+            border: none;
+            border-radius: 10px;
+        }
+
+        .chat-content{
+            background-color: rgb(74, 163, 193);
+            width: 30%;
+            padding: .8rem;
+            color: #fff;
+            border-radius: 15px;
+            margin-top: 20px;
+        }
+
+        .right-chat{
+            background-color: rgb(98, 213, 251);
+            align-self: self-end;
+        }
+
+
+    </style>
 </head>
 <body>
-    This is Home Page
+    <div style="text-align: end; font-size: 20px; padding-right: 20px;"><a href="">Exit chat</a></div>
+    <div class="container">
+        <div style="text-align: center;"><h3>Chat Room</h3></div>
+        <div class="chat-box">
+            <div class="chat-content left-chat">
+                this is my chat
+            </div>
+            <div class="chat-content right-chat">
+                This is also chat
+            </div>
+        </div>
+        <div class="type-text-wrapper">
+            <form>
+                <input type="text" placeholder="Type here..." autocomplete="off">
+                <button>Send</button>
+            </form>
+        </div>
+    </div>
     
 </body>
 </html>
