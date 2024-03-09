@@ -46,7 +46,6 @@ app.get('/', (req, res) => {
     // const sqlUsers = 'SELECT users.id AS id_user, users.name AS user_name, rooms.id AS id_room, rooms.id_first_user AS first_user, rooms.id_second_user AS second_user FROM users LEFT JOIN rooms ON(rooms.id_first_user = users.id) WHERE (rooms.id_first_user = ? OR rooms.id_second_user = ?) AND users.id <> ? UNION ALL SELECT users.id AS id_user, users.name AS user_name, rooms.id AS id_room, rooms.id_first_user AS first_user, rooms.id_second_user AS second_user FROM users LEFT JOIN rooms ON(rooms.id_second_user = users.id) WHERE (rooms.id_first_user = ? OR rooms.id_second_user = ?) AND users.id <> ?';
     const sqlUsers = 'SELECT id, name FROM users WHERE id <> ?';
     
-    
     con.query(sqlUsers, [5], (error, results, fields) => {
 
         users = JSON.stringify(results);
@@ -142,6 +141,19 @@ app.post('/api/v1/register', (req, res) => {
             res.status(400).send(data);
         }
     });
+
+});
+
+app.post('/api/v1/roomcheck', (req, res) => {
+
+    const userSelected = req.body.user_selected;
+    console.log(userSelected);
+
+    const data = {
+        user : userSelected
+    };
+
+    res.status(200).send(data);
 
 });
 
