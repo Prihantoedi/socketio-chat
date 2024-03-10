@@ -55,7 +55,8 @@
 
         const form = document.getElementsByTagName('form')[0];
 
-        form.addEventListener('submit', function(){
+        form.addEventListener('submit', function(event){
+            event.preventDefault();
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
 
@@ -78,7 +79,7 @@
                     let expireDateString = expireDate.toUTCString();
 
                     document.cookie = `id=${data.user.id}`;
-                    document.cookie = `expires=${expiresDateString}`;
+                    document.cookie = `expires=${expireDateString}`;
                     window.location.href = '/';
                 }
             }

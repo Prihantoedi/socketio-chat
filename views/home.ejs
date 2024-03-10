@@ -5,6 +5,11 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Socket IO Chat</title>
     <style>
+
+        .exit{
+            cursor: pointer;
+        }
+
         .container{
             padding: 20px;
         }
@@ -131,12 +136,12 @@
 <body>
 
     <div id="header-in-user-list" style="text-align: end">
-        <a class="exit" href="">Exit chat</a>
+        <a class="exit">Exit chat</a>
     </div>
 
     <div id="header-in-chat">
         <a id="back" href="">Back</a>
-        <a class="exit" href="">Exit chat</a>
+        <a class="exit">Exit chat</a>
     </div>
 
     <div class="container choose-user">
@@ -236,6 +241,17 @@
             chooseUser.style.display = 'block';
             userChat.style.display = 'none';
         });
+
+
+        // simple signout session
+        const exitBtnGrp = document.getElementsByClassName('exit');
+
+        for(let j =0; j < exitBtnGrp.length; ++j){
+            exitBtnGrp[j].addEventListener('click', function(){
+                document.cookie = 'id=';
+                window.location.href = '/login';
+            });
+        }
 
 
 
