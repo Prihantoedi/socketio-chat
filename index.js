@@ -57,6 +57,8 @@ app.get('/', (req, res) => {
     
 });
 
+
+
 app.get('/login', (req, res) => {
     res.sendFile(__dirname + '\\pages\\login.html');
 });
@@ -158,7 +160,11 @@ app.post('/api/v1/roomcheck', (req, res) => {
 });
 
 
+// from javascript utils:
 
+app.get('/get-cookie', (req, res) => {
+    res.sendFile(__dirname + '\\utils\\getCookie.js');
+});
 
 server.listen(3000, () => {
     console.log('server running at http://localhost:3000');

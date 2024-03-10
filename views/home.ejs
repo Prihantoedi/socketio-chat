@@ -172,8 +172,24 @@
         </div>
     </div>
 
-    <script>
-        
+    <script type="text/javascript" src="http://localhost:3000/get-cookie"></script>
+
+    <script>        
+
+
+
+        // only simple authorization
+    
+        let data = {
+            id_user: getCookieVal('id')
+        };
+
+        if(data.id_user === ''){
+            window.location.href = '/login';
+        } 
+
+        ///////////////////////////////////
+
         const user = document.getElementsByClassName('user');
 
         let headerInChat = document.getElementById('header-in-chat');
