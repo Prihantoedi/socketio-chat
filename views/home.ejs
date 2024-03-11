@@ -162,18 +162,21 @@
     <div class="container user-chat">
         <div style="text-align: center;"><h3>Chat Room</h3></div>
         <div class="chat-box">
-            <div class="chat-content left-chat">
+            <!-- <div class="chat-content left-chat">
                 this is my chat
             </div>
             <div class="chat-content right-chat">
                 This is also chat
-            </div>
+            </div> -->
         </div>
         <div class="type-text-wrapper">
             <form>
                 <input type="text" placeholder="Type here..." autocomplete="off">
                 <button>Send</button>
             </form>
+        </div>
+        <div>
+            <!-- <div id="room-id" hidden></div> -->
         </div>
     </div>
 
@@ -185,11 +188,11 @@
 
         // only simple authorization
     
-        let data = {
+        let sessionData = {
             id_user: getCookieVal('id')
         };
 
-        if(data.id_user === ''){
+        if(sessionData.id_user === ''){
             window.location.href = '/login';
         } 
 
@@ -208,9 +211,11 @@
                 headerInUserList.style.display = 'none';
 
                 const userSelected = this.id;   
+                const currentUser = sessionData.id_user;
 
                 const data = {
-                    user_selected: userSelected
+                    user_selected: userSelected,
+                    current_user: currentUser
                 };
 
                 let xhr = new XMLHttpRequest();
@@ -220,9 +225,26 @@
                 xhr.onreadystatechange = function (){
                     if(xhr.readyState === XMLHttpRequest.DONE && xhr.status === 200){
                         const data = JSON.parse(xhr.responseText);
-                        console.log(data);
-
+                        sessionStorage.setItem('id_room', data.id_room);
                         userChat.style.display = 'block';
+
+                        let chatBox = document.getElementsByClassName('chat-box')[0];
+
+                        const messagesData = data.messages;
+
+                        for(let m = 0; m < messagesData.length; m++){
+                            let chatContent = document.createElement('chat-content');
+                            chatContent.className = 'chat-content';
+                            if(messagesData[m].id_from === currentUser){
+                                chatContent.className = chatContent.className + ' right-chat';
+                            } else{
+                                chatContent.className = chatContent.className + ' left-chat';
+                            }
+
+                            chatContent.innerHTML = messagesData[m].message;
+                            chatBox.append(chatContent);
+                        }
+
                         headerInChat.style.display = 'flex';
                     }
                 }
@@ -240,6 +262,7 @@
 
             chooseUser.style.display = 'block';
             userChat.style.display = 'none';
+            sessionStorage.removeItem('id_room');
         });
 
 
@@ -249,6 +272,7 @@
         for(let j =0; j < exitBtnGrp.length; ++j){
             exitBtnGrp[j].addEventListener('click', function(){
                 document.cookie = 'id=';
+                sessionStorage.removeItem('id_room');
                 window.location.href = '/login';
             });
         }

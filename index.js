@@ -148,14 +148,63 @@ app.post('/api/v1/register', (req, res) => {
 
 app.post('/api/v1/roomcheck', (req, res) => {
 
-    const userSelected = req.body.user_selected;
-    console.log(userSelected);
+    const userSelectedId = parseInt(req.body.user_selected);
+    const currentUserId = parseInt(req.body.current_user);
 
-    const data = {
-        user : userSelected
-    };
+    console.log(userSelectedId);
+    console.log(currentUserId);
 
-    res.status(200).send(data);
+    // checking if room exists
+    const sqlRoom = 'SELECT * FROM rooms WHERE (id_first_user = ? AND id_second_user = ?) OR (id_first_user = ? AND id_second_user = ?)';
+
+    con.query(sqlRoom, [userSelectedId, currentUserId, currentUserId, userSelectedId], (error, results, fields) => {
+        
+        if(results.length === 0){
+            const sqlCreateRoom = 'INSERT INTO rooms(id_first_user, id_second_user) VALUES (?, ?)';
+
+            con.query(sqlCreateRoom, [currentUserId, userSelectedId], (error, result, fields) => {
+                if(error) throw error;
+
+                if(result.protocol41 === true){
+                    const data = {
+                        messages : [],
+                        id_room :result.insertId
+                    };
+
+                    res.status(200).send(data);
+                } else{
+                    const data = {
+                        msg: 'Room is not successfully created, something wrong happened!',
+                        status: 400
+                    };
+                
+                    res.status(400).send(data);
+                }   
+            });
+
+        } else{
+
+            // load all chat data
+            const idRoom = results[0].id;
+            const sqlAllMessages = 'SELECT message, id_from, id_to, created_at FROM messages where id_room = ?';
+        
+            con.query(sqlAllMessages, [idRoom], (error, result, fields) => {
+                
+                if(error) throw error;
+
+                // if there any messages, load all the messages
+                const data = {
+                    messages: result,
+                    id_room: idRoom
+                };
+
+                res.status(200).send(data);
+            });
+
+        }
+    })
+
+
 
 });
 
