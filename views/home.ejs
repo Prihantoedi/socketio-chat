@@ -170,8 +170,8 @@
             </div> -->
         </div>
         <div class="type-text-wrapper">
-            <form>
-                <input type="text" placeholder="Type here..." autocomplete="off">
+            <form id="chat-form">
+                <input id="message-typed" type="text" placeholder="Type here..." autocomplete="off">
                 <button>Send</button>
             </form>
         </div>
@@ -180,7 +180,9 @@
         </div>
     </div>
 
+    <script src="/socket.io/socket.io.js"></script>
     <script type="text/javascript" src="http://localhost:3000/get-cookie"></script>
+    
 
     <script>        
 
@@ -196,6 +198,8 @@
             window.location.href = '/login';
         } 
 
+        const socket = io();
+
         ///////////////////////////////////
 
         const user = document.getElementsByClassName('user');
@@ -205,13 +209,14 @@
 
         let chooseUser = document.getElementsByClassName('choose-user')[0];
         let userChat = document.getElementsByClassName('user-chat')[0];
+        
         for(let i = 0; i < user.length; ++i){
             user[i].addEventListener('click', function(){
                 chooseUser.style.display = 'none';
                 headerInUserList.style.display = 'none';
 
                 const userSelected = this.id;   
-                const currentUser = sessionData.id_user;
+                let currentUser = sessionData.id_user;
 
                 const data = {
                     user_selected: userSelected,
@@ -235,6 +240,7 @@
                         for(let m = 0; m < messagesData.length; m++){
                             let chatContent = document.createElement('chat-content');
                             chatContent.className = 'chat-content';
+                            currentUser = parseInt(currentUser);
                             if(messagesData[m].id_from === currentUser){
                                 chatContent.className = chatContent.className + ' right-chat';
                             } else{
@@ -253,6 +259,29 @@
 
             });
         }
+
+        const chatForm = document.getElementsByTagName('form')[0];
+
+        chatForm.addEventListener('submit', function(event){
+
+            event.preventDefault();
+            let messageTyped = document.getElementById('message-typed');
+            let message = messageTyped.value;
+            
+            // sending chat
+            const idRoom = sessionStorage.getItem('id_room');
+            const sendFrom = sessionData.id_user;
+
+            socket.emit('chat message', message, idRoom, sendFrom);
+
+            messageTyped.value = '';
+
+    
+        });
+
+        socket.on('chat message', (msg) => {
+            console.log(msg);
+        });
 
         const backBtn = document.getElementById('back');
 

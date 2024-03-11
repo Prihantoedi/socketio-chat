@@ -5,13 +5,14 @@ const { createServer } = require('node:http');
 const { createHash } = require('node:crypto');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
+const { Server } = require('socket.io');
 
 dotenv.config();
 
 const app = express();
 
-
 const server = createServer(app);
+const io = new Server(server);
 
 const con = mysql.createConnection({
     host: 'localhost',
@@ -28,6 +29,7 @@ con.connect(function(err){
 app.use(bodyParser.urlencoded({extended: false}));
 app.use(bodyParser.json());
 
+
 // app.get('/', (req, res) => {
 //     const data = {
 //         status : 200,
@@ -36,6 +38,7 @@ app.use(bodyParser.json());
 
 //     res.status(200).send(data);
 // });
+
 
 app.set('view engine', 'ejs');
 
@@ -93,8 +96,6 @@ app.post('/api/v1/login', (req, res) => {
                     text: 'Invalid Password!'
                 };
 
-                console.log('Invalid Password');
-
                 res.status(400).send(data);
             }
 
@@ -104,8 +105,6 @@ app.post('/api/v1/login', (req, res) => {
                 msg: 'failed',
                 text: 'User not found'
             };
-
-            console.log('User not found');
 
             res.status(400).send(data);
         }
@@ -150,9 +149,6 @@ app.post('/api/v1/roomcheck', (req, res) => {
 
     const userSelectedId = parseInt(req.body.user_selected);
     const currentUserId = parseInt(req.body.current_user);
-
-    console.log(userSelectedId);
-    console.log(currentUserId);
 
     // checking if room exists
     const sqlRoom = 'SELECT * FROM rooms WHERE (id_first_user = ? AND id_second_user = ?) OR (id_first_user = ? AND id_second_user = ?)';
@@ -213,6 +209,65 @@ app.post('/api/v1/roomcheck', (req, res) => {
 
 app.get('/get-cookie', (req, res) => {
     res.sendFile(__dirname + '\\utils\\getCookie.js');
+});
+
+
+// SOCKET IO PART
+
+io.on('connection', (socket) => {
+    console.log('user is connected');
+
+    socket.on('disconnect', () => {
+        console.log('user disconnected');
+    });
+
+    // send broadcast:
+
+    socket.on('chat message', (msg, idRoom, sender) => {
+        console.log(msg);
+        console.log(idRoom);
+        console.log(sender);
+
+        sender = parseInt(sender);
+
+        const sqlRoom = 'SELECT id_first_user, id_second_user FROM rooms WHERE id = ?';
+
+        con.query(sqlRoom, [idRoom], (error, results, fields) => {
+            if(results.length !== 0){
+                // let id_destination = 0;
+
+                const first_user = results[0].id_first_user;
+                const second_user = results[0].id_second_user;
+
+                console.log(first_user);
+                console.log(second_user);
+
+                const id_destination = sender === first_user ? second_user : first_user;
+
+                console.log(id_destination);
+
+                const sqlInsertMessage = 'INSERT INTO messages(id_room, id_from, id_to, message) VALUES(?, ?, ?, ?)';
+                con.query(sqlInsertMessage, [idRoom, sender, id_destination, msg], (error, result, fields) => {
+                    if(error) throw error;
+                    console.log(result);
+
+                    if(result.protocol41 === true){
+                        console.log('message send successfully');
+                        io.emit('chat message', msg + ' from me');
+                    } else{
+                        console.log('message not send successfully!');
+                    }
+                });
+
+            } else{
+                console.log('room not found');
+            }
+        });
+        // io.emit('chat message', msg);
+    })
+
+
+
 });
 
 server.listen(3000, () => {
