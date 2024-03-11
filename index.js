@@ -48,8 +48,14 @@ app.get('/', (req, res) => {
 
     // const sqlUsers = 'SELECT users.id AS id_user, users.name AS user_name, rooms.id AS id_room, rooms.id_first_user AS first_user, rooms.id_second_user AS second_user FROM users LEFT JOIN rooms ON(rooms.id_first_user = users.id) WHERE (rooms.id_first_user = ? OR rooms.id_second_user = ?) AND users.id <> ? UNION ALL SELECT users.id AS id_user, users.name AS user_name, rooms.id AS id_room, rooms.id_first_user AS first_user, rooms.id_second_user AS second_user FROM users LEFT JOIN rooms ON(rooms.id_second_user = users.id) WHERE (rooms.id_first_user = ? OR rooms.id_second_user = ?) AND users.id <> ?';
     const sqlUsers = 'SELECT id, name FROM users WHERE id <> ?';
-    
-    con.query(sqlUsers, [5], (error, results, fields) => {
+    // console.log(req.originalUrl);
+
+    const oriUrl = req.originalUrl;
+    const oriUriSplitter = oriUrl.split('=');
+    const idUser = parseInt(oriUriSplitter[oriUriSplitter.length - 1]);
+    console.log(idUser);
+
+    con.query(sqlUsers, [idUser], (error, results, fields) => {
 
         users = JSON.stringify(results);
         const data = {

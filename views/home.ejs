@@ -132,6 +132,13 @@
          
 
     </style>
+
+    <script>
+                // only simple authorization
+    
+
+
+    </script>
 </head>
 <body>
 
@@ -186,10 +193,6 @@
 
     <script>        
 
-
-
-        // only simple authorization
-    
         let sessionData = {
             id_user: getCookieVal('id')
         };
@@ -294,20 +297,29 @@
 
             const message = parseChatBroadcast.msg;
 
-        
-
             if(currentUser === idSender || currentUser === idReceiver){
                 let chatContent = document.createElement('chat-content');
                 chatContent.className = 'chat-content';
                 
                 if(currentUser === idSender){
                     chatContent.className = chatContent.className + ' right-chat';
-                } else{
+                    chatContent.innerHTML = message;
+                    chatBox.append(chatContent);
+
+                    setTimeout( () => {
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }, 500);
+                } else if(currentUser === idReceiver){
                     chatContent.className = chatContent.className + ' left-chat';
+                    chatContent.innerHTML = message;
+                    chatBox.append(chatContent);
+
+                    setTimeout( () => {
+                        chatBox.scrollTop = chatBox.scrollHeight;
+                    }, 500);
                 }
 
-                chatContent.innerHTML = message;
-                chatBox.append(chatContent);
+                
             }
 
         });

@@ -80,7 +80,7 @@
 
                     document.cookie = `id=${data.user.id}`;
                     document.cookie = `expires=${expireDateString}`;
-                    window.location.href = '/';
+                    window.location.href = `/?id=${data.user.id}`;
                 }
             }
 
