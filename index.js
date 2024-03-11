@@ -224,10 +224,6 @@ io.on('connection', (socket) => {
     // send broadcast:
 
     socket.on('chat message', (msg, idRoom, sender) => {
-        console.log(msg);
-        console.log(idRoom);
-        console.log(sender);
-
         sender = parseInt(sender);
 
         const sqlRoom = 'SELECT id_first_user, id_second_user FROM rooms WHERE id = ?';
@@ -236,24 +232,26 @@ io.on('connection', (socket) => {
             if(results.length !== 0){
                 // let id_destination = 0;
 
-                const first_user = results[0].id_first_user;
-                const second_user = results[0].id_second_user;
+                const firstUser = results[0].id_first_user;
+                const secondUser = results[0].id_second_user;
 
-                console.log(first_user);
-                console.log(second_user);
 
-                const id_destination = sender === first_user ? second_user : first_user;
-
-                console.log(id_destination);
+                const idDestination = sender === firstUser ? secondUser : firstUser;
 
                 const sqlInsertMessage = 'INSERT INTO messages(id_room, id_from, id_to, message) VALUES(?, ?, ?, ?)';
-                con.query(sqlInsertMessage, [idRoom, sender, id_destination, msg], (error, result, fields) => {
+                con.query(sqlInsertMessage, [idRoom, sender, idDestination, msg], (error, result, fields) => {
                     if(error) throw error;
-                    console.log(result);
 
                     if(result.protocol41 === true){
                         console.log('message send successfully');
-                        io.emit('chat message', msg + ' from me');
+                        const chatData = {
+                            msg : msg,
+                            sender: sender,
+                            receiver: parseInt(idDestination)
+                        };
+
+                        const chatBroadcast = JSON.stringify(chatData);
+                        io.emit('chat message', chatBroadcast);
                     } else{
                         console.log('message not send successfully!');
                     }

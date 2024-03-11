@@ -209,7 +209,7 @@
 
         let chooseUser = document.getElementsByClassName('choose-user')[0];
         let userChat = document.getElementsByClassName('user-chat')[0];
-        
+
         for(let i = 0; i < user.length; ++i){
             user[i].addEventListener('click', function(){
                 chooseUser.style.display = 'none';
@@ -276,11 +276,40 @@
 
             messageTyped.value = '';
 
+
     
         });
 
-        socket.on('chat message', (msg) => {
-            console.log(msg);
+        // receive broadcast
+
+        socket.on('chat message', (chatBroadcast) => {
+
+            let chatBox = document.getElementsByClassName('chat-box')[0];
+            const parseChatBroadcast = JSON.parse(chatBroadcast);
+
+            const currentUser = parseInt(sessionData.id_user);
+
+            const idSender = parseChatBroadcast.sender;
+            const idReceiver = parseChatBroadcast.receiver;
+
+            const message = parseChatBroadcast.msg;
+
+        
+
+            if(currentUser === idSender || currentUser === idReceiver){
+                let chatContent = document.createElement('chat-content');
+                chatContent.className = 'chat-content';
+                
+                if(currentUser === idSender){
+                    chatContent.className = chatContent.className + ' right-chat';
+                } else{
+                    chatContent.className = chatContent.className + ' left-chat';
+                }
+
+                chatContent.innerHTML = message;
+                chatBox.append(chatContent);
+            }
+
         });
 
         const backBtn = document.getElementById('back');
