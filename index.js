@@ -6,6 +6,7 @@ const { createHash } = require('node:crypto');
 const bodyParser = require('body-parser');
 const mysql = require('mysql');
 const { Server } = require('socket.io');
+const async = require('async');
 
 dotenv.config();
 
@@ -274,7 +275,34 @@ io.on('connection', (socket) => {
 
 });
 
+function square(x){
+    return new Promise((resolve, reject) => {
+        setTimeout( () => {
+            const data = {
+                status: 200,
+                msg: 'youre good'
+            };
+
+            // resolve(Math.pow(x, 2));
+        
+            try{
+                resolve(data);
+            }catch{
+                reject(new Error('Something wrong happened!'));
+            }
+        }, 2000);
+    });
+}
+
+async function output(x){
+    const ans = await square(x);
+    console.log(ans);
+}
+
+
 server.listen(3000, () => {
+
+    output(10);
     console.log('server running at http://localhost:3000');
 
     // const content = 'prihanto edy sanjaya'; 
